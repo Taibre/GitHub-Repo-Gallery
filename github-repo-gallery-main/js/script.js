@@ -3,6 +3,9 @@ const overview = document.querySelector(".overview");
 const username = "Taibre";
 //select the unordered list to display the repos list
 const repoList = document.querySelector(".repo-list");
+const repoInfo = document.querySelector(".repos");
+const repoData = document.querySelector(".repo-data");
+
 
 const getProfileData = async function () {
     //const profile = await fetch("https://api.github.com/Taibre");
@@ -45,3 +48,45 @@ const infoDisplay = function (repos) {
         repoItem.innerHTML = `<h3>${repo.name}</h3>`;
         repoList.append(repoItem);  
 }};
+
+repoList.addEventListener("click", function repoList (e) {
+    if (e.target.matches("h3")){
+        const repoName = e.target.textContent.trim();
+    infoGrab(repoName);
+    }
+});
+
+const infoGrab = async function (repoName) {
+    const repoGrab = await fetch(`https://api.github.com/repos/taibre/${repoName}`);
+    //console.log("Fetching repoGrab:", repoGrab);
+    const repoInfo = await repoGrab.json() ;
+   // console.log(repoInfo);
+   const fetchLanguages = await fetch(`https://api.github.com/repos/taibre/${repoName}/languages`);
+   const languageData = await fetchLanguages.json() ;
+    //console.log(languageData);
+   const languages = [] ;
+   for (const language in languageData) {
+    languages.push(language);
+   // console.log(languages);
+    
+   }
+   displayRepoInfo(repoInfo, languages);
+};
+
+const displayRepoInfo = function (repoDetails, languages) {
+   repoData.innerHTML = "";
+   repoData.classList.remove("hide");
+   repoInfo.classList.add("hide");
+    const div = document.createElement("div");
+        div.innerHTML = `
+    <div>
+        <h2>Name: ${repoDetails.name}</h2>
+    <p>Description: ${repoDetails.description}</p>
+    <p>Default Branch: ${repoDetails.default_branch}</p>
+    <p>Languages: ${languages.join(", ")}</p>
+    <a class="visit" href="${repoDetails.html_url}" target="_blank" rel="noreferrer noopener">View Repo on GitHub!</a>
+    </div>`;
+
+    repoData.append(div);
+};
+
