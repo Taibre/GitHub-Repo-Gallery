@@ -1,6 +1,8 @@
 //Where my profile information will appear
 const overview = document.querySelector(".overview");
 const username = "Taibre";
+//select the unordered list to display the repos list
+const repoList = document.querySelector(".repo-list");
 
 const getProfileData = async function () {
     //const profile = await fetch("https://api.github.com/Taibre");
@@ -26,4 +28,20 @@ div.innerHTML = `
       <p><strong>Number of public repos:</strong> ${data.public_repos}</p>
     </div>`;
    overview.append(div); 
+   repoFetch();
 };
+
+const repoFetch = async function () {
+    const getRepo = await fetch(`https://api.github.com/users/taibre/repos?sort=updated&per_page=100`);
+const data = await getRepo.json();
+infoDisplay(data);
+};
+
+const infoDisplay = function (repos) {
+
+    for (const repo of repos) {
+        const repoItem = document.createElement("li");
+        repoItem.classList.add("repo");
+        repoItem.innerHTML = `<h3>${repo.name}</h3>`;
+        repoList.append(repoItem);  
+}};
